@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أنمي مينو — عالمك بلا حدود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0812;--bg2:#0f0c1a;--card:#13101f;--border:rgba(255,255,255,0.07);--red:#e8173a;--purple:#9b30ff;--neon:#00e5ff;--gold:#ffd438;--pink:#ff6b9d;--white:#f0eeff;--muted:#6b6585;--green:#00e676}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Cairo',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px}
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:9999;background:#06040e;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.splash-logo{width:min(82vw,680px);animation:splashIn 1.2s cubic-bezier(.16,1,.3,1) both}
+.splash-fallback{display:none;flex-direction:column;align-items:center;gap:8px}
+@keyframes splashIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.splash-bar{margin-top:44px;width:220px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.splash-fill{height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--purple));border-radius:2px;animation:sfill 2.4s ease forwards}
+@keyframes sfill{to{width:100%}}
+.splash-text{margin-top:14px;font-size:12px;color:var(--muted);letter-spacing:4px}
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:500;padding:0 28px;height:58px;display:flex;align-items:center;gap:16px;background:rgba(10,8,18,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;cursor:pointer}
+.nav-logo-img{height:30px}
+.logo-txt{font-weight:900;font-size:17px;white-space:nowrap}.logo-txt span{color:var(--red)}
+.nav-search{flex:1;max-width:480px;display:flex;align-items:center;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;padding:0 12px;gap:8px}
+.nav-search input{flex:1;background:none;border:none;outline:none;color:var(--white);font-family:'Cairo';font-size:13px;padding:9px 0}
+.nav-search input::placeholder{color:var(--muted)}
+.nav-links{display:flex;gap:2px;margin-right:auto}
+.nav-link{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;color:rgba(240,238,255,.6);cursor:pointer;transition:.2s;border:none;background:none;font-family:'Cairo';white-space:nowrap}
+.nav-link:hover,.nav-link.active{color:var(--white);background:rgba(255,255,255,.08)}
+.nav-link.active{color:var(--red)}
+.nav-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-sm{padding:7px 16px;border-radius:8px;font-family:'Cairo';font-size:12px;font-weight:700;cursor:pointer}
+.btn-ghost-sm{background:transparent;border:1px solid var(--border);color:var(--white)}
+.btn-red-sm{background:var(--red);border:none;color:#fff;box-shadow:0 0 14px rgba(232,23,58,.3)}
+.notif-btn{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg)}
+/* SIDEBAR */
+#sidebar{position:fixed;top:58px;right:0;bottom:0;width:210px;z-index:400;background:rgba(10,8,18,.99);border-left:1px solid var(--border);overflow-y:auto;padding:12px 0}
+.sb-sec{margin-bottom:6px}
+.sb-title{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:8px 18px 3px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;font-weight:600;color:rgba(240,238,255,.65);cursor:pointer;transition:.15s}
+.sb-item:hover,.sb-item.active{color:var(--white);background:rgba(255,255,255,.05)}
+.sb-item.active{color:var(--red);border-right:3px solid var(--red)}
+.sb-ic{font-size:16px;width:20px;text-align:center}
+.sb-badge{margin-right:auto;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px}
+.badge-r{background:rgba(232,23,58,.2);color:var(--red)}.badge-g{background:rgba(0,230,118,.15);color:var(--green)}.badge-go{background:rgba(255,212,56,.15);color:var(--gold)}
+/* MAIN */
+#main{margin-top:58px;margin-right:210px;min-height:calc(100vh - 58px)}
+/* PAGES */
+.page{display:none;padding:24px 24px 60px}.page.active{display:block}
+/* HERO */
+.hero-banner{position:relative;border-radius:18px;overflow:hidden;height:360px;margin-bottom:28px;cursor:pointer;background:linear-gradient(135deg,#1a0a2e,#0d1a40)}
+.hero-bg-fx{position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 80% 50%,rgba(155,48,255,.2),transparent),radial-gradient(ellipse 50% 60% at 20% 80%,rgba(232,23,58,.15),transparent)}
+.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px 32px;background:linear-gradient(to right,rgba(0,0,0,.85) 0%,transparent 65%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;background:rgba(232,23,58,.2);border:1px solid rgba(232,23,58,.4);font-size:10px;font-weight:700;color:var(--red);margin-bottom:10px;width:fit-content}
+.hero-ttl{font-size:clamp(24px,4vw,52px);font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+.hero-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.hero-mi{font-size:11px;color:rgba(255,255,255,.6);font-weight:600}.hero-sep{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.3)}
+.hero-sc{display:flex;align-items:center;gap:3px;color:var(--gold);font-weight:800;font-size:12px}
+.hero-btns{display:flex;gap:10px}
+.btn-watch{padding:10px 24px;border-radius:10px;background:var(--red);border:none;color:#fff;font-family:'Cairo';font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 6px 24px rgba(232,23,58,.4);transition:.2s}
+.btn-watch:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,23,58,.6)}
+.btn-add{padding:10px 18px;border-radius:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:'Cairo';font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
+.btn-add:hover{background:rgba(255,255,255,.18)}
+.hero-ep-lbl{position:absolute;top:20px;left:20px;padding:6px 14px;border-radius:8px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);border:1px solid var(--border);font-size:11px;font-weight:700}
+/* SEC HEADER */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-title{font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px}
+.sec-more{font-size:11px;color:var(--neon);font-weight:700;cursor:pointer;display:flex;align-items:center;gap:3px;transition:.2s;background:none;border:none;font-family:'Cairo'}
+.sec-more:hover{gap:7px}
+/* CONTENT GRID */
+.content-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));margin-bottom:32px}
+.content-grid.wide{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.c-card{border-radius:11px;overflow:hidden;background:var(--card);cursor:pointer;transition:.25s;border:1px solid var(--border);position:relative}
+.c-card:hover{transform:translateY(-6px) scale(1.02);border-color:rgba(232,23,58,.35);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.c-card:hover .c-overlay{opacity:1}
+.c-thumb{width:100%;aspect-ratio:.7;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.c-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.2) 50%,transparent 100%);opacity:0;transition:.3s;display:flex;flex-direction:column;justify-content:flex-end;padding:10px}
+.play-now{width:40px;height:40px;border-radius:50%;background:var(--red);border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;box-shadow:0 4px 18px rgba(232,23,58,.5)}
+.c-ov-ttl{font-size:11px;font-weight:800;text-align:center}
+.c-badge{position:absolute;top:7px;right:7px;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:800}
+.bg-red{background:var(--red);color:#fff}.bg-gold{background:var(--gold);color:#000}.bg-green{background:var(--green);color:#000}.bg-purple{background:var(--purple);color:#fff}.bg-neon{background:var(--neon);color:#000}.bg-orange{background:#ff6b00;color:#fff}.bg-pink{background:var(--pink);color:#fff}
+.c-info{padding:9px}
+.c-name{font-size:11px;font-weight:800;margin-bottom:3px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-meta{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+.c-score{color:var(--gold);font-weight:700}.c-eps{color:var(--neon)}
+/* thumb colors */
+.t1{background:linear-gradient(160deg,#1a0a2e,#3d1a5c)}.t2{background:linear-gradient(160deg,#0d1f3c,#1a4080)}.t3{background:linear-gradient(160deg,#2d0a0a,#5c1a1a)}.t4{background:linear-gradient(160deg,#0a2d1a,#1a5c3d)}.t5{background:linear-gradient(160deg,#2d2a0a,#5c551a)}.t6{background:linear-gradient(160deg,#1a1a2d,#2d2d5c)}.t7{background:linear-gradient(160deg,#2d0a1a,#5c1a3d)}.t8{background:linear-gradient(160deg,#0a1a2d,#1a3d5c)}.t9{background:linear-gradient(160deg,#200020,#400050)}.t10{background:linear-gradient(160deg,#002020,#005050)}.t11{background:linear-gradient(160deg,#201000,#503000)}.t12{background:linear-gradient(160deg,#102000,#305000)}
+.thumb-char{font-family:'Noto Sans JP';opacity:.3;font-size:42px;user-select:none}
+/* CAT TABS */
+.cat-tabs{display:flex;gap:7px;margin-bottom:20px;flex-wrap:wrap}
+.cat-tab{padding:6px 16px;border-radius:20px;font-family:'Cairo';font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:.2s}
+.cat-tab:hover{color:var(--white);border-color:rgba(255,255,255,.2)}.cat-tab.active{background:var(--red);border-color:var(--red);color:#fff}
+/* CONTINUE WATCHING */
+.cw-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin-bottom:28px;scrollbar-width:none}
+.cw-row::-webkit-scrollbar{display:none}
+.cw-card{flex-shrink:0;width:185px;border-radius:11px;overflow:hidden;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:.2s}
+.cw-card:hover{border-color:rgba(232,23,58,.4);transform:translateY(-4px)}
+.cw-thumb{height:104px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:30px}
+.cw-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.15)}
+.cw-fill{height:100%;background:var(--red)}
+.cw-info{padding:8px}
+.cw-title{font-size:11px;font-weight:800;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cw-ep{font-size:10px;color:var(--muted)}.cw-resume{font-size:10px;color:var(--red);font-weight:700}
+/* PLAYER */
+#player-page{display:none;padding:18px 24px 60px}
+.player-layout{display:grid;grid-template-columns:1fr 300px;gap:20px}
+.player-box{border-radius:14px;overflow:hidden;background:#000;aspect-ratio:16/9;position:relative}
+.player-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(135deg,#0d0520,#1a0a3d,#0a1a2d);cursor:pointer}
+.player-ph:hover .play-big-btn{transform:scale(1.1)}
+.play-big-btn{width:76px;height:76px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 0 50px rgba(232,23,58,.5);transition:.3s}
+.player-ph p{font-size:17px;font-weight:800;color:rgba(255,255,255,.8)}
+.player-ph small{font-size:11px;color:var(--muted)}
+.player-iframe{width:100%;height:100%;border:none;display:none}
+/* Servers box */
+.srv-box{margin-top:14px;padding:14px;background:var(--card);border-radius:12px;border:1px solid var(--border)}
+.srv-title{font-size:12px;font-weight:800;margin-bottom:10px;color:var(--muted)}
+.srv-tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.srv-btn{padding:6px 12px;border-radius:7px;font-family:'Cairo';font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.04);color:rgba(240,238,255,.7);transition:.2s;display:flex;align-items:center;gap:5px}
+.srv-btn:hover,.srv-btn.active{background:rgba(232,23,58,.15);border-color:var(--red);color:var(--red)}
+.s-dot{width:6px;height:6px;border-radius:50%}.dot-g{background:var(--green)}.dot-y{background:var(--gold)}.dot-r{background:var(--red)}
+.ql-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ql-lbl{font-size:11px;color:var(--muted);font-weight:700;margin-left:6px}
+.ql-btn{padding:4px 10px;border-radius:5px;font-family:'Cairo';font-size:10px;font-weight:800;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:.2s}
+.ql-btn:hover,.ql-btn.active{background:rgba(0,229,255,.15);border-color:var(--neon);color:var(--neon)}
+/* Downloads */
+.dl-box{margin-top:14px;padding:14px;background:var(--card);border-radius:12px;border:1px solid var(--border)}
+.dl-title{font-size:12px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.dl-btn{padding:9px 12px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);cursor:pointer;font-family:'Cairo';transition:.2s;display:flex;flex-direction:column;gap:2px}
+.dl-btn:hover{border-color:rgba(0,230,118,.4);background:rgba(0,230,118,.06)}
+.dl-q{font-size:11px;font-weight:800;color:var(--green)}.dl-s{font-size:9px;color:var(--muted)}.dl-srv{font-size:9px;color:var(--neon)}
+/* Episodes */
+.eps-sidebar{display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 160px);overflow-y:auto}
+.eps-hdr{font-size:13px;font-weight:900;margin-bottom:2px}
+.ep-search-box{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border)}
+.ep-search-box input{background:none;border:none;outline:none;flex:1;color:var(--white);font-family:'Cairo';font-size:11px}
+.eps-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.ep-n{padding:7px 2px;border-radius:7px;text-align:center;font-size:10px;font-weight:800;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.04);transition:.2s}
+.ep-n:hover,.ep-n.active{background:var(--red);border-color:var(--red);color:#fff}
+.ep-n.watched{border-color:rgba(0,230,118,.3);color:var(--green);background:rgba(0,230,118,.05)}
+/* Info panel */
+.info-panel{margin-top:18px;padding:18px;background:var(--card);border-radius:14px;border:1px solid var(--border)}
+.info-ttl{font-size:20px;font-weight:900;margin-bottom:7px}
+.info-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.info-tag{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid var(--border);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7)}
+.info-desc{font-size:12px;color:rgba(240,238,255,.6);line-height:1.8;max-width:700px}
+.info-row{display:flex;gap:20px;margin-top:14px;flex-wrap:wrap}
+.info-it label{font-size:9px;color:var(--muted);font-weight:700;display:block;margin-bottom:2px;letter-spacing:1px}
+.info-it span{font-size:12px;font-weight:800}
+/* Modal */
+.modal-ov{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.87);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-ov.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:18px;width:min(760px,95vw);max-height:88vh;overflow-y:auto;position:relative}
+.modal-hdr{position:relative;height:200px;border-radius:18px 18px 0 0;overflow:hidden;background:linear-gradient(135deg,#1a0a2e,#0d1a40)}
+.modal-hdr-fx{position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 60% 40%,rgba(155,48,255,.3),transparent)}
+.modal-hdr-char{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Noto Sans JP';font-size:130px;opacity:.05}
+.modal-hdr-cnt{position:absolute;bottom:18px;right:20px}
+.modal-big-ttl{font-size:26px;font-weight:900}
+.modal-close{position:absolute;top:12px;left:12px;width:32px;height:32px;border-radius:7px;background:rgba(0,0,0,.5);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--muted);transition:.2s}
+.modal-close:hover{color:var(--white)}
+.modal-body{padding:20px}
+.modal-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.modal-tag{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid var(--border);color:rgba(255,255,255,.6)}
+.modal-desc{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:18px}
+.modal-info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.m-info-it{padding:10px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.m-info-it label{font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px}
+.m-info-it span{font-size:12px;font-weight:800}
+.modal-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn-mw{padding:11px 24px;border-radius:9px;background:var(--red);border:none;color:#fff;font-family:'Cairo';font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px}
+.btn-ml{padding:11px 18px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--white);font-family:'Cairo';font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px}
+/* Watchlist / profile */
+.prof-hdr{padding:28px;border-radius:18px;margin-bottom:24px;background:linear-gradient(135deg,rgba(155,48,255,.1),rgba(232,23,58,.08));border:1px solid var(--border);display:flex;align-items:center;gap:20px}
+.prof-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--purple));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;flex-shrink:0}
+.prof-name{font-size:22px;font-weight:900}.prof-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.prof-stats{display:flex;gap:24px;margin-top:14px}
+.ps-num{font-size:20px;font-weight:900}.ps-num span{color:var(--red)}.ps-lbl{font-size:10px;color:var(--muted)}
+/* search */
+.search-q{font-size:13px;color:var(--muted);margin-bottom:16px}.search-q span{color:var(--white);font-weight:800}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.fil-sel{padding:7px 12px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--white);font-family:'Cairo';font-size:11px;font-weight:700;cursor:pointer;outline:none}
+.fil-sel option{background:var(--bg2)}
+/* marquee */
+.marquee-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:9px 0;margin-bottom:26px;background:rgba(255,255,255,.015)}
+.marquee-inner{display:flex;animation:marq 28s linear infinite;width:max-content}
+.m-item{padding:0 22px;font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;display:flex;align-items:center;gap:7px}
+.m-dot{width:3px;height:3px;border-radius:50%;background:var(--red)}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);z-index:9000;padding:11px 22px;border-radius:11px;background:rgba(20,16,35,.99);border:1px solid rgba(255,255,255,.13);font-size:12px;font-weight:700;transition:transform .4s cubic-bezier(.16,1,.3,1);backdrop-filter:blur(10px);display:flex;align-items:center;gap:7px}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* reveal */
+.reveal{opacity:0;transform:translateY(18px);transition:.5s ease}.reveal.vis{opacity:1;transform:none}
+/* responsive */
+@media(max-width:1024px){#sidebar{display:none}#main{margin-right:0}.player-layout{grid-template-columns:1fr}.eps-sidebar{max-height:280px}}
+@media(max-width:768px){nav{padding:0 12px;gap:8px}.nav-links{display:none}.page{padding:14px 10px 60px}.content-grid{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:9px}.hero-banner{height:240px}#player-page{padding:10px}}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img class="splash-logo" src="1000120372.png" alt="أنمي مينو"
+    onload="this.style.display='block'"
+    onerror="this.style.display='none';document.getElementById('sfb').style.display='flex'">
+  <div id="sfb" style="display:none;flex-direction:column;align-items:center;gap:6px">
+    <div style="font-size:64px;font-weight:900">أنمي <span style="color:#e8173a">مينو</span></div>
+    <div style="font-size:14px;letter-spacing:8px;color:#6b6585">ANIME MINO</div>
+    <div style="font-size:12px;color:#6b6585;margin-top:3px">• عالمك بلا حدود •</div>
+  </div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+  <div class="splash-text">LOADING YOUR WORLD...</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="goHome()">
+    <img class="nav-logo-img" src="1000120372.png" alt="logo" onerror="this.style.display='none'">
+    <span class="logo-txt">أنمي <span>مينو</span></span>
+  </div>
+  <div class="nav-search">
+    <span style="color:var(--muted)">🔍</span>
+    <input type="text" id="searchInput" placeholder="ابحث عن أنمي، مانغا، مانهوا، كرتون..." onkeyup="handleSearch(event)">
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" id="nl-home" onclick="goHome();setNav(this)">🏠 الرئيسية</button>
+    <button class="nav-link" id="nl-anime" onclick="goPage('anime');setNav(this)">🎌 أنمي</button>
+    <button class="nav-link" id="nl-manga" onclick="goPage('manga');setNav(this)">📖 مانغا</button>
+    <button class="nav-link" id="nl-cartoon" onclick="goPage('cartoon');setNav(this)">📺 كرتون</button>
+    <button class="nav-link" id="nl-comic" onclick="goPage('comic');setNav(this)">🦸 كوميك</button>
+  </div>
+  <div class="nav-right">
+    <div class="notif-btn"><span>🔔</span><div class="notif-dot"></div></div>
+    <button class="btn-sm btn-ghost-sm" onclick="goPage('watchlist')">قائمتي</button>
+    <button class="btn-sm btn-red-sm" onclick="goPage('profile')">حسابي</button>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-sec">
+    <div class="sb-title">القائمة الرئيسية</div>
+    <div class="sb-item active" id="sb-home" onclick="goHome();setSb(this)"><span class="sb-ic">🏠</span>الرئيسية</div>
+    <div class="sb-item" id="sb-anime" onclick="goPage('anime');setSb(this)"><span class="sb-ic">🎌</span>أنمي ياباني<span class="sb-badge badge-r">رائج</span></div>
+    <div class="sb-item" id="sb-manhwa" onclick="goPage('manhwa');setSb(this)"><span class="sb-ic">🇰🇷</span>مانهوا كورية</div>
+    <div class="sb-item" id="sb-manhua" onclick="goPage('manhua');setSb(this)"><span class="sb-ic">🇨🇳</span>مانهوا صينية</div>
+    <div class="sb-item" id="sb-manga" onclick="goPage('manga');setSb(this)"><span class="sb-ic">📖</span>مانغا يابانية</div>
+    <div class="sb-item" id="sb-cartoon" onclick="goPage('cartoon');setSb(this)"><span class="sb-ic">📺</span>كرتون عالمي<span class="sb-badge badge-g">جديد</span></div>
+    <div class="sb-item" id="sb-comic" onclick="goPage('comic');setSb(this)"><span class="sb-ic">🦸</span>كوميك & مارفل</div>
+    <div class="sb-item" id="sb-donghua" onclick="goPage('donghua');setSb(this)"><span class="sb-ic">🐉</span>دونهوا صيني<span class="sb-badge badge-go">حصري</span></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-title">تصفح بالتصنيف</div>
+    <div class="sb-item" onclick="filterGenre('أكشن')"><span class="sb-ic">⚔️</span>أكشن</div>
+    <div class="sb-item" onclick="filterGenre('رومانسي')"><span class="sb-ic">💕</span>رومانسي</div>
+    <div class="sb-item" onclick="filterGenre('خيال')"><span class="sb-ic">🔮</span>خيال علمي</div>
+    <div class="sb-item" onclick="filterGenre('رعب')"><span class="sb-ic">👻</span>رعب</div>
+    <div class="sb-item" onclick="filterGenre('رياضي')"><span class="sb-ic">⚽</span>رياضي</div>
+    <div class="sb-item" onclick="filterGenre('كوميدي')"><span class="sb-ic">😄</span>كوميدي</div>
+    <div class="sb-item" onclick="filterGenre('دراما')"><span class="sb-ic">🎭</span>دراما</div>
+    <div class="sb-item" onclick="filterGenre('مغامرة')"><span class="sb-ic">🗺️</span>مغامرة</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-title">حسابي</div>
+    <div class="sb-item" onclick="goPage('watchlist');setSb(this)"><span class="sb-ic">📋</span>قائمة المشاهدة</div>
+    <div class="sb-item" onclick="goPage('profile');setSb(this)"><span class="sb-ic">👤</span>ملفي الشخصي</div>
+    <div class="sb-item" onclick="goPage('downloads');setSb(this)"><span class="sb-ic">⬇️</span>التنزيلات</div>
+    <div class="sb-item" onclick="showToast('⚙️ الإعدادات قريباً!')"><span class="sb-ic">⚙️</span>الإعدادات</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+<div style="padding:24px 24px 0">
+  <!-- Hero Banner -->
+  <div class="hero-banner reveal" onclick="openPlayer(0)">
+    <div class="hero-bg-fx"></div>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px;opacity:.05;font-family:'Noto Sans JP'">進</div>
+    <div class="hero-ep-lbl">🔴 مستمر • الحلقة 96</div>
+    <div class="hero-content">
+      <div class="hero-badge">🔥 الأكثر مشاهدةً هذا الأسبوع</div>
+      <div class="hero-ttl">Attack on Titan<br>هجوم العمالقة</div>
+      <div class="hero-meta">
+        <span class="hero-mi">2013–2023</span><span class="hero-sep"></span>
+        <span class="hero-mi">أكشن • دراما</span><span class="hero-sep"></span>
+        <span class="hero-sc">⭐ 9.8</span><span class="hero-sep"></span>
+        <span class="hero-mi">96 حلقة</span>
+      </div>
+      <div class="hero-btns">
+        <button class="btn-watch" onclick="event.stopPropagation();openPlayer(0)">▶ شاهد الآن</button>
+        <button class="btn-add" onclick="event.stopPropagation();addToList(0)">+ قائمتي</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Continue watching -->
+  <div class="sec-head reveal"><div class="sec-title">▶️ أكمل المشاهدة</div></div>
+  <div class="cw-row reveal" id="cwRow"><div style="color:var(--muted);font-size:12px;padding:16px 0">لم تشاهد شيئاً بعد — ابدأ الآن!</div></div>
+
+  <!-- Marquee -->
+  <div class="marquee-wrap"><div class="marquee-inner" id="marqInner"></div></div>
+
+  <!-- Trending -->
+  <div class="sec-head reveal"><div class="sec-title">🔥 الأنمي الرائج</div><button class="sec-more" onclick="goPage('anime')">عرض الكل →</button></div>
+  <div class="content-grid wide reveal" id="h-anime"></div>
+
+  <div class="sec-head reveal"><div class="sec-title">🇰🇷 المانهوا الكورية</div><button class="sec-more" onclick="goPage('manhwa')">عرض الكل →</button></div>
+  <div class="content-grid reveal" id="h-manhwa"></div>
+
+  <div class="sec-head reveal"><div class="sec-title">📺 الكرتون العالمي</div><button class="sec-more" onclick="goPage('cartoon')">عرض الكل →</button></div>
+  <div class="content-grid wide reveal" id="h-cartoon"></div>
+
+  <div class="sec-head reveal"><div class="sec-title">🐉 الدونهوا الصيني</div><button class="sec-more" onclick="goPage('donghua')">عرض الكل →</button></div>
+  <div class="content-grid reveal" id="h-donghua"></div>
+
+  <div class="sec-head reveal"><div class="sec-title">🦸 الكوميك والمارفل</div><button class="sec-more" onclick="goPage('comic')">عرض الكل →</button></div>
+  <div class="content-grid reveal" id="h-comic"></div>
+</div>
+</div>
+
+<!-- ANIME -->
+<div id="page-anime" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:18px">🎌 الأنمي الياباني</div>
+  <div class="cat-tabs" id="anime-tabs"></div>
+  <div class="content-grid wide" id="grid-anime"></div>
+</div>
+
+<!-- MANGA -->
+<div id="page-manga" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:18px">📖 المانغا اليابانية</div>
+  <div class="cat-tabs" id="manga-tabs"></div>
+  <div class="content-grid" id="grid-manga"></div>
+</div>
+
+<!-- MANHWA -->
+<div id="page-manhwa" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:18px">🇰🇷 المانهوا الكورية</div>
+  <div class="content-grid" id="grid-manhwa"></div>
+</div>
+
+<!-- MANHUA -->
+<div id="page-manhua" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:18px">🇨🇳 المانهوا الصينية</div>
+  <div class="content-grid" id="grid-manhua"></div>
+</div>
+
+<!-- CARTOON -->
+<div id="page-cartoon" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:18px">📺 الكرتون العالمي</div>
+  <div class="cat-tabs" id="cartoon-tabs"></div>
+  <div class="content-grid wide" id="grid-cartoon"></div>
+</div>
+
+<!-- COMIC -->
+<div id="page-comic" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:18px">🦸 الكوميك والمارفل</div>
+  <div class="content-grid" id="grid-comic"></div>
+</div>
+
+<!-- DONGHUA -->
+<div id="page-donghua" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:18px">🐉 الدونهوا الصيني</div>
+  <div class="content-grid" id="grid-donghua"></div>
+</div>
+
+<!-- WATCHLIST -->
+<div id="page-watchlist" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:22px">📋 قائمة المشاهدة</div>
+  <div class="content-grid wide" id="grid-watchlist"></div>
+  <div id="wl-empty" style="display:none;text-align:center;padding:70px;color:var(--muted)">
+    <div style="font-size:44px;margin-bottom:14px">📭</div>
+    <div style="font-size:15px;font-weight:700">قائمتك فارغة</div>
+    <div style="font-size:12px;margin-top:6px">أضف أنمي أو مانغا من أي صفحة</div>
+  </div>
+</div>
+
+<!-- DOWNLOADS -->
+<div id="page-downloads" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:22px">⬇️ التنزيلات</div>
+  <div style="text-align:center;padding:70px;color:var(--muted)">
+    <div style="font-size:44px;margin-bottom:14px">📥</div>
+    <div style="font-size:15px;font-weight:700">لا توجد تنزيلات</div>
+    <div style="font-size:12px;margin-top:6px">استخدم زر التنزيل أثناء المشاهدة</div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="page-profile" class="page">
+  <div class="prof-hdr">
+    <div class="prof-av">أ</div>
+    <div>
+      <div class="prof-name">أنمي مينو</div>
+      <div class="prof-sub">عضو منذ 2024 • عاشق الأنمي العربي</div>
+      <div class="prof-stats">
+        <div><div class="ps-num" id="stat-watched">0</div><div class="ps-lbl">حلقة شاهدتها</div></div>
+        <div><div class="ps-num" id="stat-list">0<span>+</span></div><div class="ps-lbl">في القائمة</div></div>
+        <div><div class="ps-num">0</div><div class="ps-lbl">مانغا قرأتها</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="sec-title" style="margin-bottom:18px">آخر مشاهداتك</div>
+  <div class="content-grid wide" id="grid-history"></div>
+</div>
+
+<!-- SEARCH -->
+<div id="page-search" class="page">
+  <div class="sec-title" style="font-size:22px;margin-bottom:8px">نتائج البحث</div>
+  <div class="search-q">البحث عن: <span id="sq-text"></span></div>
+  <div class="filter-row">
+    <select class="fil-sel" id="fil-type">
+      <option value="">كل الأنواع</option>
+      <option value="anime">أنمي</option><option value="manga">مانغا</option>
+      <option value="manhwa">مانهوا</option><option value="cartoon">كرتون</option>
+      <option value="comic">كوميك</option><option value="donghua">دونهوا</option>
+    </select>
+    <select class="fil-sel" id="fil-genre">
+      <option value="">كل التصنيفات</option>
+      <option>أكشن</option><option>رومانسي</option><option>خيال</option>
+      <option>رعب</option><option>كوميدي</option><option>دراما</option>
+      <option>رياضي</option><option>مغامرة</option>
+    </select>
+    <select class="fil-sel" id="fil-status">
+      <option value="">الحالة</option><option>مستمر</option><option>منتهي</option>
+    </select>
+  </div>
+  <div class="content-grid wide" id="grid-search"></div>
+</div>
+
+</div><!-- /main -->
+
+<!-- PLAYER -->
+<div id="player-page">
+  <div style="margin-bottom:14px;display:flex;align-items:center;gap:8px">
+    <button onclick="closePlayer()" style="padding:6px 14px;border-radius:7px;background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--white);font-family:'Cairo';font-size:11px;font-weight:700;cursor:pointer">← رجوع</button>
+    <span id="breadcrumb" style="font-size:12px;color:var(--muted)"></span>
+  </div>
+  <div class="player-layout">
+    <div>
+      <div class="player-box" id="playerBox">
+        <div class="player-ph" id="playerPh" onclick="loadVideo()">
+          <div class="play-big-btn">▶</div>
+          <p id="pl-title">اضغط للمشاهدة</p>
+          <small id="pl-ep">اختر سيرفراً ثم اضغط</small>
+        </div>
+        <iframe id="playerFrame" class="player-iframe" allowfullscreen></iframe>
+      </div>
+      <!-- Servers -->
+      <div class="srv-box">
+        <div class="srv-title">🖥️ السيرفرات — اختر الأفضل لاتصالك</div>
+        <div class="srv-tabs" id="srvTabs"></div>
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:12px">
+          <div class="ql-lbl">🎬 الجودة:</div>
+          <div class="ql-row" id="qlBtns"></div>
+          <div style="margin-right:auto;font-size:10px;color:var(--muted)">💡 اضغط على السيرفر ثم زر التشغيل</div>
+        </div>
+      </div>
+      <!-- Downloads -->
+      <div class="dl-box">
+        <div class="dl-title">⬇️ تنزيل الحلقة — جميع الجودات والسيرفرات</div>
+        <div class="dl-grid" id="dlGrid"></div>
+      </div>
+      <!-- Info -->
+      <div class="info-panel" id="infoPanel"></div>
+    </div>
+    <!-- Episodes -->
+    <div class="eps-sidebar">
+      <div class="eps-hdr" id="epsHdr">الحلقات</div>
+      <div class="ep-search-box">
+        <span style="color:var(--muted)">🔍</span>
+        <input type="text" placeholder="بحث عن حلقة..." id="epSrch" oninput="filterEps()">
+      </div>
+      <div class="eps-grid" id="epsGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-hdr" id="m-hdr">
+      <div class="modal-hdr-fx"></div>
+      <div class="modal-hdr-char" id="m-char">進</div>
+      <div class="modal-hdr-cnt"><div class="modal-big-ttl" id="m-title"></div></div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-body">
+      <div class="modal-tags" id="m-tags"></div>
+      <div class="modal-desc" id="m-desc"></div>
+      <div class="modal-info" id="m-info"></div>
+      <div class="modal-btns">
+        <button class="btn-mw" id="m-watch">▶ شاهد الآن</button>
+        <button class="btn-ml" onclick="addToListModal()">+ أضف للقائمة</button>
+        <button class="btn-ml" onclick="showToast('⬇️ جارٍ إعداد التنزيل...');closeModal()">⬇️ تنزيل</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ DATABASE ═══
+const DB = {
+anime:[
+  {id:0,title:'هجوم العمالقة',en:'Attack on Titan',char:'進',t:'t2',type:'anime',genre:'أكشن • دراما',year:'2013-2023',eps:96,score:9.8,status:'منتهي',badge:'الأعلى',bc:'bg-gold',desc:'في عالم محاط بجدران ضخمة، تهاجم عمالقة ضخمة البشرية. يقرر إيرن الانضمام للجيش للانتقام بعد مشاهدة مأساته الشخصية.'},
+  {id:1,title:'كيميتسو نو يايبا',en:'Demon Slayer',char:'鬼',t:'t1',type:'anime',genre:'أكشن • خيال',year:'2019',eps:55,score:9.2,status:'مستمر',badge:'رائج',bc:'bg-red',desc:'تانجيرو يبحث عن علاج لأخته التي تحولت إلى شيطان.'},
+  {id:2,title:'ون بيس',en:'One Piece',char:'ワ',t:'t4',type:'anime',genre:'مغامرة • كوميدي',year:'1999',eps:1110,score:9.5,status:'مستمر',badge:'أسطوري',bc:'bg-purple',desc:'لوفي ومجموعته يبحثون عن كنز الملك القراصنة.'},
+  {id:3,title:'Jujutsu Kaisen',en:'Jujutsu Kaisen',char:'呪',t:'t3',type:'anime',genre:'أكشن • رعب',year:'2020',eps:47,score:9.0,status:'مستمر',badge:'جديد',bc:'bg-green',desc:'يوجي يبتلع إصبع الملعون سوكونا ليصبح وعاءً لأقوى اللعنات.'},
+  {id:4,title:'بليتش: حرب الدم',en:'Bleach TYBW',char:'ブ',t:'t6',type:'anime',genre:'أكشن • خيال',year:'2022',eps:26,score:9.4,status:'مستمر',badge:'حصري',bc:'bg-neon',desc:'الجزء الأخير والأقوى من بليتش.'},
+  {id:5,title:'رجل المنشار',en:'Chainsaw Man',char:'チ',t:'t5',type:'anime',genre:'رعب • أكشن',year:'2022',eps:12,score:8.9,status:'مستمر',badge:'',bc:'',desc:'ديندجي يندمج مع الشيطان بوخيتا ليصبح رجل المنشار.'},
+  {id:6,title:'ناروتو شيبودن',en:'Naruto Shippuden',char:'ナ',t:'t7',type:'anime',genre:'أكشن • مغامرة',year:'2007-2017',eps:500,score:9.0,status:'منتهي',badge:'كلاسيك',bc:'bg-orange',desc:'ناروتو يواصل رحلته لأن يصبح هوكاغي.'},
+  {id:7,title:'Fullmetal Alchemist',en:'FMA Brotherhood',char:'鋼',t:'t8',type:'anime',genre:'أكشن • دراما',year:'2009-2010',eps:64,score:9.9,status:'منتهي',badge:'الأفضل',bc:'bg-gold',desc:'الأخوان إيلريك يبحثان عن حجر الفيلسوف.'},
+  {id:8,title:'Spy x Family',en:'Spy x Family',char:'家',t:'t9',type:'anime',genre:'كوميدي • رومانسي',year:'2022',eps:37,score:8.8,status:'مستمر',badge:'',bc:'',desc:'جاسوس يبني عائلة وهمية لإنجاز مهمته السرية.'},
+  {id:9,title:'فينلاند ساغا',en:'Vinland Saga',char:'ヴ',t:'t10',type:'anime',genre:'دراما • تاريخي',year:'2019',eps:48,score:8.9,status:'منتهي',badge:'',bc:'',desc:'ثورفين يسعى للانتقام في حقبة الفايكنج.'},
+  {id:10,title:'Re:Zero',en:'Re:Zero',char:'リ',t:'t11',type:'anime',genre:'خيال • نفسي',year:'2016',eps:50,score:8.7,status:'مستمر',badge:'',bc:'',desc:'سوباروا ينتقل إلى عالم آخر ويكتشف قدرته على إعادة الزمن عند الموت.'},
+  {id:11,title:'Hunter x Hunter',en:'Hunter x Hunter',char:'ハ',t:'t12',type:'anime',genre:'مغامرة • أكشن',year:'2011-2014',eps:148,score:9.1,status:'منتهي',badge:'',bc:'',desc:'غون يريد أن يجد والده بأن يصبح صياداً.'},
+  {id:12,title:'Dragon Ball Super',en:'Dragon Ball Super',char:'ド',t:'t1',type:'anime',genre:'أكشن • مغامرة',year:'2015-2018',eps:131,score:8.5,status:'منتهي',badge:'',bc:'',desc:'سون غوكو يواجه تهديدات جديدة من ما وراء الكون.'},
+  {id:13,title:'Sword Art Online',en:'SAO',char:'ソ',t:'t2',type:'anime',genre:'خيال • رومانسي',year:'2012',eps:96,score:8.3,status:'منتهي',badge:'',bc:'',desc:'كيريتو محاصر في لعبة واقعية افتراضية.'},
+  {id:14,title:'My Hero Academia',en:'My Hero Academia',char:'僕',t:'t3',type:'anime',genre:'أكشن • خيال',year:'2016',eps:138,score:8.6,status:'مستمر',badge:'',bc:'',desc:'إيزاكو ميدوريا يطمح ليصبح أعظم بطل خارق.'},
+  {id:15,title:'Overlord',en:'Overlord',char:'王',t:'t4',type:'anime',genre:'خيال • أكشن',year:'2015',eps:52,score:8.5,status:'منتهي',badge:'',bc:'',desc:'لاعب محترف يجد نفسه محاصراً في شخصيته.'},
+],
+manhwa:[
+  {id:20,title:'Solo Leveling',en:'Solo Leveling',char:'솔',t:'t1',type:'manhwa',genre:'أكشن • خيال',year:'2018',eps:179,score:9.5,status:'منتهي',badge:'الأشهر',bc:'bg-red',desc:'صياد من المستوى E يحصل على قدرة فريدة للارتقاء وحده في عالم من الوحوش.'},
+  {id:21,title:'Tower of God',en:'Tower of God',char:'신',t:'t2',type:'manhwa',genre:'مغامرة • أكشن',year:'2010',eps:600,score:9.0,status:'مستمر',badge:'',bc:'',desc:'بام يصعد برج الله بحثاً عن صديقته راشيل.'},
+  {id:22,title:'Omniscient Reader',en:'Omniscient Reader',char:'전',t:'t3',type:'manhwa',genre:'خيال • أكشن',year:'2020',eps:550,score:9.3,status:'منتهي',badge:'رائج',bc:'bg-purple',desc:'قارئ رواية يجد نفسه في عالم الرواية ذاتها.'},
+  {id:23,title:'Lookism',en:'Lookism',char:'외',t:'t4',type:'manhwa',genre:'دراما • أكشن',year:'2014',eps:450,score:8.7,status:'مستمر',badge:'',bc:'',desc:'شاب يكتشف أن له جسداً ثانياً وسيماً.'},
+  {id:24,title:'Nano Machine',en:'Nano Machine',char:'나',t:'t5',type:'manhwa',genre:'أكشن • خيال',year:'2020',eps:180,score:8.9,status:'مستمر',badge:'',bc:'',desc:'شاب ضعيف يحصل على نانو مشين من المستقبل.'},
+  {id:25,title:'God of High School',en:'GOHS',char:'갓',t:'t6',type:'manhwa',genre:'أكشن • رياضي',year:'2011',eps:570,score:8.5,status:'منتهي',badge:'',bc:'',desc:'بطولة قتال تكشف عن قوى خارقة لدى المشاركين.'},
+  {id:26,title:'Eleceed',en:'Eleceed',char:'전',t:'t7',type:'manhwa',genre:'أكشن • كوميدي',year:'2019',eps:270,score:8.8,status:'مستمر',badge:'',bc:'',desc:'شاب يملك قوة صاعقة يلتقي بمدرب في جسد قطة.'},
+  {id:27,title:'Second Life Ranker',en:'SLR',char:'두',t:'t8',type:'manhwa',genre:'أكشن • خيال',year:'2020',eps:200,score:8.6,status:'مستمر',badge:'',bc:'',desc:'ينتقم لأخيه في برج من ألف طابق.'},
+],
+manhua:[
+  {id:30,title:'Battle Through the Heavens',en:'BTTH',char:'斗',t:'t7',type:'manhua',genre:'أكشن • خيال',year:'2016',eps:300,score:8.6,status:'مستمر',badge:'',bc:'',desc:'شاب فقد قدرته يسعى لاستعادتها والانتقام.'},
+  {id:31,title:'Martial Peak',en:'Martial Peak',char:'武',t:'t8',type:'manhua',genre:'أكشن • رومانسي',year:'2017',eps:3500,score:8.4,status:'مستمر',badge:'الأطول',bc:'bg-gold',desc:'رحلة يانغ كاي لبلوغ قمة فنون الحرب.'},
+  {id:32,title:'Dragon Prince Yuan',en:'DPY',char:'龍',t:'t9',type:'manhua',genre:'خيال • أكشن',year:'2018',eps:800,score:8.5,status:'مستمر',badge:'',bc:'',desc:'أمير يواجه مصيره بعد سرقة مصدر قوته.'},
+  {id:33,title:'Soul Land',en:'Soul Land',char:'魂',t:'t10',type:'manhua',genre:'خيال • أكشن',year:'2017',eps:500,score:8.7,status:'مستمر',badge:'',bc:'',desc:'عالم يتحكم فيه أصحاب الأرواح الخاصة.'},
+],
+manga:[
+  {id:40,title:'Berserk',en:'Berserk',char:'剣',t:'t1',type:'manga',genre:'أكشن • رعب',year:'1989',eps:374,score:9.8,status:'مستمر',badge:'أسطوري',bc:'bg-gold',desc:'غاتس المحارب الأسود يبحث عن الانتقام من صديقه الخائن.'},
+  {id:41,title:'Vagabond',en:'Vagabond',char:'武',t:'t2',type:'manga',genre:'دراما • تاريخي',year:'1998',eps:327,score:9.6,status:'متوقف',badge:'',bc:'',desc:'رحلة المحارب الأسطوري ميامواتو موساشي.'},
+  {id:42,title:'Slam Dunk',en:'Slam Dunk',char:'バ',t:'t3',type:'manga',genre:'رياضي • كوميدي',year:'1990-1996',eps:276,score:9.5,status:'منتهي',badge:'',bc:'',desc:'طالب في الثانوية يكتشف شغفه بكرة السلة.'},
+  {id:43,title:'Vinland Saga',en:'Vinland Saga',char:'ヴ',t:'t4',type:'manga',genre:'دراما • تاريخي',year:'2005',eps:207,score:9.3,status:'مستمر',badge:'',bc:'',desc:'ثورفين في رحلة الفايكنج الأسطورية.'},
+],
+cartoon:[
+  {id:50,title:'Avatar: The Last Airbender',en:'Avatar TLAB',char:'🌊',t:'t2',type:'cartoon',genre:'مغامرة • خيال',year:'2005-2008',eps:61,score:9.4,status:'منتهي',badge:'أسطوري',bc:'bg-gold',desc:'أفاتار آنغ يسعى لإتقان العناصر الأربعة لإنقاذ العالم.'},
+  {id:51,title:'Teen Titans',en:'Teen Titans',char:'🦸',t:'t3',type:'cartoon',genre:'أكشن • كوميدي',year:'2003-2006',eps:65,score:8.9,status:'منتهي',badge:'',bc:'',desc:'فريق من الأبطال الشباب يحارب الأشرار.'},
+  {id:52,title:'Gravity Falls',en:'Gravity Falls',char:'🌲',t:'t4',type:'cartoon',genre:'رعب • كوميدي',year:'2012-2016',eps:40,score:9.2,status:'منتهي',badge:'رائع',bc:'bg-purple',desc:'توأمان يقضيان الصيف في بلدة غامضة مليئة بالأسرار.'},
+  {id:53,title:'Arcane',en:'Arcane',char:'⚡',t:'t5',type:'cartoon',genre:'دراما • أكشن',year:'2021',eps:9,score:9.5,status:'منتهي',badge:'الأفضل',bc:'bg-neon',desc:'قصة جينكس وفاي في عالم من الصراع والسحر التقني.'},
+  {id:54,title:'Samurai Jack',en:'Samurai Jack',char:'⚔️',t:'t6',type:'cartoon',genre:'أكشن • مغامرة',year:'2001-2017',eps:62,score:9.1,status:'منتهي',badge:'',bc:'',desc:'سامورائي يحارب شيطاناً مريراً عبر الزمن.'},
+  {id:55,title:'The Owl House',en:'The Owl House',char:'🦉',t:'t7',type:'cartoon',genre:'خيال • مغامرة',year:'2020-2023',eps:40,score:9.0,status:'منتهي',badge:'',bc:'',desc:'فتاة تجد نفسها في عالم السحر.'},
+  {id:56,title:'Steven Universe',en:'Steven Universe',char:'💎',t:'t8',type:'cartoon',genre:'مغامرة • رومانسي',year:'2013-2019',eps:160,score:8.8,status:'منتهي',badge:'',bc:'',desc:'ستيفن يتعلم استخدام قوى جوهره السحري.'},
+  {id:57,title:'RWBY',en:'RWBY',char:'🌹',t:'t9',type:'cartoon',genre:'أكشن • خيال',year:'2013',eps:200,score:8.2,status:'مستمر',badge:'',bc:'',desc:'أربع فتيات صيادات في أكاديمية Beacon.'},
+  {id:58,title:'Wakfu',en:'Wakfu',char:'🌿',t:'t10',type:'cartoon',genre:'مغامرة • خيال',year:'2008-2017',eps:65,score:8.7,status:'منتهي',badge:'',bc:'',desc:'بطل يبحث عن أصوله في عالم سحري فريد.',country:'فرنسا'},
+  {id:59,title:'Primal',en:'Primal',char:'🦕',t:'t11',type:'cartoon',genre:'أكشن • دراما',year:'2019',eps:20,score:9.0,status:'منتهي',badge:'',bc:'',desc:'إنسان بدائي وديناصور يواجهان عالماً قاسياً معاً.',country:'أمريكا'},
+],
+comic:[
+  {id:60,title:'Spider-Man',en:'Spider-Man',char:'🕷',t:'t1',type:'comic',genre:'أكشن • مغامرة',year:'1962',eps:900,score:9.0,status:'مستمر',badge:'مارفل',bc:'bg-red',desc:'بيتر باركر الطالب الذي حصل على قوى العنكبوت.'},
+  {id:61,title:'Batman',en:'Batman',char:'🦇',t:'t2',type:'comic',genre:'أكشن • نفسي',year:'1939',eps:1000,score:9.2,status:'مستمر',badge:'DC',bc:'bg-purple',desc:'بروس واين البطل الخارق بلا قوى خارقة.'},
+  {id:62,title:'The Walking Dead',en:'The Walking Dead',char:'💀',t:'t3',type:'comic',genre:'رعب • دراما',year:'2003-2019',eps:193,score:8.8,status:'منتهي',badge:'',bc:'',desc:'ريك غريمس يقود مجموعة من الناجين في عالم الزومبي.'},
+  {id:63,title:'Invincible',en:'Invincible',char:'💪',t:'t4',type:'comic',genre:'أكشن • خيال',year:'2003',eps:144,score:9.1,status:'منتهي',badge:'',bc:'',desc:'مارك غريسون يكتشف قدراته الخارقة المتأخرة.'},
+  {id:64,title:'Saga',en:'Saga',char:'🚀',t:'t5',type:'comic',genre:'خيال علمي • دراما',year:'2012',eps:66,score:9.3,status:'مستمر',badge:'',bc:'',desc:'عائلة تفر من حرب عالمية بين عرقيها المتحاربين.'},
+  {id:65,title:'X-Men',en:'X-Men',char:'✖️',t:'t6',type:'comic',genre:'أكشن • خيال',year:'1963',eps:700,score:8.9,status:'مستمر',badge:'مارفل',bc:'bg-red',desc:'فريق من المتحولين يدافعون عن عالم يخشاهم.'},
+],
+donghua:[
+  {id:70,title:'Grandmaster of Demonic',en:'Mo Dao Zu Shi',char:'魔',t:'t1',type:'donghua',genre:'خيال • رومانسي',year:'2018',eps:24,score:9.1,status:'منتهي',badge:'حصري',bc:'bg-purple',desc:'ويوكسيان يعود للحياة في جسد شخص آخر ويكتشف مؤامرة ضد ماضيه.'},
+  {id:71,title:'Heaven Official Blessing',en:'TGCF',char:'天',t:'t2',type:'donghua',genre:'خيال • رومانسي',year:'2020',eps:24,score:9.0,status:'مستمر',badge:'',bc:'',desc:'إله صعد إلى السماء ثلاث مرات يحمل وزر لعنة قديمة.'},
+  {id:72,title:"The King's Avatar",en:"King's Avatar",char:'王',t:'t3',type:'donghua',genre:'رياضي • أكشن',year:'2017',eps:12,score:8.7,status:'منتهي',badge:'',bc:'',desc:'لاعب ألعاب أسطوري يعود للساحة من الصفر.'},
+  {id:73,title:'Link Click',en:'Link Click',char:'時',t:'t4',type:'donghua',genre:'غموض • نفسي',year:'2021',eps:22,score:9.2,status:'مستمر',badge:'رائج',bc:'bg-neon',desc:'شابان لديهما القدرة على دخول الصور وتغيير الماضي.'},
+  {id:74,title:'Fog Hill of Five Elements',en:'FHFE',char:'霧',t:'t5',type:'donghua',genre:'أكشن • خيال',year:'2020',eps:3,score:9.4,status:'مستمر',badge:'فني',bc:'bg-gold',desc:'قصة بصرية مذهلة عن عالم العناصر الخمسة.'},
+]
+};
+
+const ALL = Object.values(DB).flat();
+
+// ═══ STATE ═══
+let wl = JSON.parse(localStorage.getItem('amwl')||'[]');
+let hist = JSON.parse(localStorage.getItem('amhist')||'[]');
+let wc = parseInt(localStorage.getItem('amwc')||'0');
+let curItem = null, curEp = 1, activeSrv = 0, activeQl = 2;
+let modalId = null;
+
+// ═══ SERVERS ═══
+const SRVS = [
+  {n:'سيرفر 1 — HD',s:'g',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+  {n:'سيرفر 2 — FHD',s:'g',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+  {n:'سيرفر 3 — Mega',s:'y',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+  {n:'سيرفر 4 — GDrive',s:'g',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+  {n:'سيرفر 5 — StreamSB',s:'r',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+  {n:'سيرفر 6 — Voe',s:'y',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+  {n:'سيرفر 7 — Filemoon',s:'g',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+  {n:'سيرفر 8 — Mirror',s:'y',u:'https://www.youtube.com/embed/LDU_Txk06tM'},
+];
+const QLS = ['360p','480p','720p','1080p','4K'];
+const DL_SRV = ['سيرفر A','سيرفر B','GDrive','Mega'];
+
+// ═══ SPLASH ═══
+window.addEventListener('load',()=>setTimeout(()=>{
+  document.getElementById('splash').classList.add('hide');
+  init();
+},2700));
+
+function init(){
+  renderHome(); renderAllGrids(); setupMarquee(); setupReveal();
+}
+
+// ═══ CARD ═══
+function mkCard(item,fn){
+  return `<div class="c-card" onclick="${fn}">
+    <div class="c-thumb ${item.t}">
+      <span class="thumb-char">${item.char}</span>
+      ${item.badge?`<span class="c-badge ${item.bc}">${item.badge}</span>`:''}
+      <div class="c-overlay">
+        <button class="play-now" onclick="event.stopPropagation();openPlayer(${item.id})">▶</button>
+        <div class="c-ov-ttl">${item.title}</div>
+      </div>
+    </div>
+    <div class="c-info">
+      <div class="c-name">${item.title}</div>
+      <div class="c-meta">
+        <span class="c-score">⭐ ${item.score}</span>
+        <span class="c-eps">${item.eps}</span>
+        <span>${String(item.year).slice(0,4)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHome(){
+  // CW
+  const cw = document.getElementById('cwRow');
+  if(!hist.length){cw.innerHTML='<div style="color:var(--muted);font-size:12px;padding:14px 0">ابدأ المشاهدة الآن!</div>';return;}
+  cw.innerHTML = hist.slice(0,8).map(id=>{
+    const item = ALL.find(x=>x.id===id);
+    if(!item)return '';
+    const p = Math.floor(Math.random()*80)+10;
+    return `<div class="cw-card" onclick="openPlayer(${item.id})">
+      <div class="cw-thumb ${item.t}">
+        <span style="font-family:'Noto Sans JP';font-size:26px;opacity:.28">${item.char}</span>
+        <div class="cw-progress"><div class="cw-fill" style="width:${p}%"></div></div>
+      </div>
+      <div class="cw-info">
+        <div class="cw-title">${item.title}</div>
+        <div class="cw-ep">الحلقة ${Math.ceil(p/10)}</div>
+        <div class="cw-resume">${p}% • أكمل</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAllGrids(){
+  const g=(id,data,limit)=>{
+    document.getElementById(id).innerHTML=(limit?data.slice(0,limit):data).map(i=>mkCard(i,`openModal(${i.id})`)).join('');
+  };
+  g('h-anime',DB.anime,8); g('h-manhwa',DB.manhwa,6); g('h-cartoon',DB.cartoon,6); g('h-donghua',DB.donghua,4); g('h-comic',DB.comic,5);
+  g('grid-anime',DB.anime); g('grid-manga',DB.manga); g('grid-manhwa',DB.manhwa);
+  g('grid-manhua',DB.manhua); g('grid-cartoon',DB.cartoon); g('grid-comic',DB.comic); g('grid-donghua',DB.donghua);
+
+  // tabs
+  mkTabs('anime-tabs','anime',['الكل','أكشن','رومانسي','خيال','رعب','كوميدي','دراما','مغامرة','رياضي']);
+  mkTabs('cartoon-tabs','cartoon',['الكل','مغامرة','أكشن','كوميدي','دراما','خيال','رعب']);
+  mkTabs('manga-tabs','manga',['الكل','أكشن','دراما','رياضي','رعب','خيال']);
+
+  renderWL(); updateStats();
+}
+
+function mkTabs(elId, type, cats){
+  document.getElementById(elId).innerHTML = cats.map((c,i)=>
+    `<button class="cat-tab${i===0?' active':''}" onclick="catFilter(this,'${type}','${c}')">${c}</button>`
+  ).join('');
+}
+
+function renderWL(){
+  const grid=document.getElementById('grid-watchlist');
+  const empty=document.getElementById('wl-empty');
+  if(!wl.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=wl.map(id=>{const i=ALL.find(x=>x.id===id);return i?mkCard(i,`openModal(${i.id})`):''}).join('');
+}
+
+function updateStats(){
+  document.getElementById('stat-watched').textContent=wc;
+  document.getElementById('stat-list').innerHTML=wl.length+'<span>+</span>';
+  const gh=document.getElementById('grid-history');
+  if(!hist.length){gh.innerHTML='<div style="color:var(--muted);font-size:12px;padding:14px 0">لم تشاهد شيئاً بعد</div>';return;}
+  gh.innerHTML=hist.slice(0,6).map(id=>{const i=ALL.find(x=>x.id===id);return i?mkCard(i,`openModal(${i.id})`):''}).join('');
+}
+
+// ═══ MARQUEE ═══
+function setupMarquee(){
+  const items=ALL.map(i=>`<div class="m-item"><span class="m-dot"></span>${i.title}</div>`).join('');
+  document.getElementById('marqInner').innerHTML=items+items;
+}
+
+// ═══ PAGES ═══
+function goHome(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('player-page').style.display='none';
+  document.getElementById('page-home').classList.add('active');
+  renderHome();
+  window.scrollTo(0,0);
+}
+
+function goPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('player-page').style.display='none';
+  const p=document.getElementById('page-'+name);
+  if(p)p.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function setNav(el){document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));el.classList.add('active')}
+function setSb(el){document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));el.classList.add('active')}
+
+// ═══ CATEGORY FILTER ═══
+function catFilter(btn, type, cat){
+  btn.closest('.cat-tabs').querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const data=DB[type]||[];
+  const filtered=cat==='الكل'?data:data.filter(i=>i.genre.includes(cat));
+  const grid=document.getElementById('grid-'+type);
+  grid.innerHTML=filtered.length?filtered.map(i=>mkCard(i,`openModal(${i.id})`)).join('')
+    :'<div style="color:var(--muted);text-align:center;padding:40px;grid-column:1/-1">لا توجد نتائج</div>';
+}
+
+function filterGenre(g){
+  const results=ALL.filter(i=>i.genre.includes(g));
+  document.getElementById('sq-text').textContent='تصنيف: '+g;
+  document.getElementById('grid-search').innerHTML=results.map(i=>mkCard(i,`openModal(${i.id})`)).join('');
+  goPage('search');
+}
+
+// ═══ SEARCH ═══
+function handleSearch(e){
+  const q=e.target.value.trim();
+  if(e.key==='Enter'&&q)doSearch(q);
+  else if(q.length>2)doSearch(q);
+}
+function doSearch(q){
+  const r=ALL.filter(i=>
+    i.title.includes(q)||i.en.toLowerCase().includes(q.toLowerCase())||
+    i.genre.includes(q)||i.type.includes(q)
+  );
+  document.getElementById('sq-text').textContent=q;
+  document.getElementById('grid-search').innerHTML=r.length
+    ?r.map(i=>mkCard(i,`openModal(${i.id})`)).join('')
+    :`<div style="color:var(--muted);text-align:center;padding:60px;grid-column:1/-1">😔 لا توجد نتائج لـ "${q}"</div>`;
+  goPage('search');
+}
+
+// ═══ MODAL ═══
+function openModal(id){
+  const item=ALL.find(x=>x.id===id);
+  if(!item)return;
+  modalId=id;
+  document.getElementById('m-char').textContent=item.char;
+  document.getElementById('m-title').textContent=item.title;
+  document.getElementById('m-tags').innerHTML=
+    item.genre.split('•').map(g=>`<span class="modal-tag">${g.trim()}</span>`).join('')+
+    `<span class="modal-tag">${typeLabel(item.type)}</span>`+
+    `<span class="modal-tag" style="color:var(--gold)">⭐ ${item.score}</span>`+
+    `<span class="modal-tag" style="color:${item.status==='مستمر'?'var(--green)':'var(--muted)'}">${item.status}</span>`;
+  document.getElementById('m-desc').textContent=item.desc;
+  document.getElementById('m-info').innerHTML=`
+    <div class="m-info-it"><label>السنة</label><span>${item.year}</span></div>
+    <div class="m-info-it"><label>الحلقات/الفصول</label><span>${item.eps}</span></div>
+    <div class="m-info-it"><label>التقييم</label><span style="color:var(--gold)">⭐ ${item.score}</span></div>
+    <div class="m-info-it"><label>النوع</label><span>${typeLabel(item.type)}</span></div>
+    <div class="m-info-it"><label>التصنيف</label><span>${item.genre}</span></div>
+    <div class="m-info-it"><label>الحالة</label><span>${item.status}</span></div>`;
+  document.getElementById('m-watch').onclick=()=>{closeModal();openPlayer(id)};
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function addToListModal(){addToList(modalId)}
+
+// ═══ PLAYER ═══
+function openPlayer(id){
+  const item=ALL.find(x=>x.id===id);
+  if(!item)return;
+  curItem=item; curEp=1;
+  closeModal();
+  // history
+  hist=hist.filter(x=>x!==id);
+  hist.unshift(id);
+  if(hist.length>20)hist.pop();
+  localStorage.setItem('amhist',JSON.stringify(hist));
+  wc++; localStorage.setItem('amwc',wc);
+  updateStats(); renderHome();
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('player-page').style.display='block';
+  document.getElementById('breadcrumb').textContent=`الرئيسية / ${typeLabel(item.type)} / ${item.title}`;
+  document.getElementById('pl-title').textContent=`${item.title} — الحلقة 1`;
+  document.getElementById('pl-ep').textContent='اختر سيرفراً ثم اضغط تشغيل';
+  document.getElementById('playerFrame').style.display='none';
+  document.getElementById('playerPh').style.display='flex';
+  document.getElementById('epsHdr').textContent=`${item.title} — ${item.eps} ${item.type==='manga'||item.type==='manhwa'||item.type==='manhua'||item.type==='comic'?'فصل':'حلقة'}`;
+
+  // servers
+  document.getElementById('srvTabs').innerHTML=SRVS.map((s,i)=>
+    `<button class="srv-btn${i===0?' active':''}" onclick="selSrv(this,${i})">
+      <span class="s-dot dot-${s.s}"></span>${s.n}
+    </button>`).join('');
+
+  // quality
+  document.getElementById('qlBtns').innerHTML=QLS.map((q,i)=>
+    `<button class="ql-btn${i===2?' active':''}" onclick="selQl(this,${i})">${q}</button>`).join('');
+
+  // downloads — all quality x server combos
+  document.getElementById('dlGrid').innerHTML=QLS.flatMap(q=>
+    DL_SRV.map(s=>
+      `<div class="dl-btn" onclick="startDl('${q}','${s}')">
+        <span class="dl-q">${q}</span>
+        <span class="dl-srv">${s}</span>
+        <span class="dl-s">~${dlSz(q)} MB</span>
+      </div>`
+    )
+  ).slice(0,8).join('');
+
+  // info
+  document.getElementById('infoPanel').innerHTML=`
+    <div class="info-ttl">${item.title} <span style="color:var(--muted);font-size:15px">${item.en}</span></div>
+    <div class="info-tags">${item.genre.split('•').map(g=>`<span class="info-tag">${g.trim()}</span>`).join('')}
+      <span class="info-tag">${item.year}</span>
+      <span class="info-tag" style="color:var(--gold)">⭐ ${item.score}/10</span>
+      <span class="info-tag" style="color:${item.status==='مستمر'?'var(--green)':'var(--muted)'}">${item.status}</span>
+    </div>
+    <div class="info-desc">${item.desc}</div>
+    <div class="info-row">
+      <div class="info-it"><label>النوع</label><span>${typeLabel(item.type)}</span></div>
+      <div class="info-it"><label>الحلقات</label><span>${item.eps}</span></div>
+      <div class="info-it"><label>التقييم</label><span style="color:var(--gold)">⭐ ${item.score}</span></div>
+      <div class="info-it"><label>الحالة</label><span>${item.status}</span></div>
+    </div>`;
+
+  renderEps(item.eps);
+  window.scrollTo(0,0);
+}
+
+function renderEps(count){
+  const c=Math.min(count,200);
+  document.getElementById('epsGrid').innerHTML=Array.from({length:c},(_,i)=>{
+    const n=i+1;
+    return `<div class="ep-n${n===1?' active':''}${n<curEp?' watched':''}" onclick="selEp(this,${n})">${n}</div>`;
+  }).join('');
+}
+
+function selEp(el,n){
+  document.querySelectorAll('.ep-n').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active'); curEp=n;
+  document.getElementById('pl-title').textContent=`${curItem.title} — الحلقة ${n}`;
+  document.getElementById('pl-ep').textContent=`الحلقة ${n} — ${SRVS[activeSrv].n}`;
+  document.getElementById('playerFrame').style.display='none';
+  document.getElementById('playerPh').style.display='flex';
+  showToast(`📺 الحلقة ${n} — اضغط تشغيل`);
+}
+
+function filterEps(){
+  const q=document.getElementById('epSrch').value;
+  document.querySelectorAll('.ep-n').forEach(el=>el.style.display=el.textContent.includes(q)?'':'none');
+}
+
+function loadVideo(){
+  document.getElementById('playerPh').style.display='none';
+  const fr=document.getElementById('playerFrame');
+  fr.src=SRVS[activeSrv].u+'?autoplay=1';
+  fr.style.display='block';
+}
+
+function selSrv(btn,i){
+  document.querySelectorAll('.srv-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); activeSrv=i;
+  document.getElementById('playerFrame').style.display='none';
+  document.getElementById('playerPh').style.display='flex';
+  showToast(`🖥️ ${SRVS[i].n} — اضغط تشغيل`);
+}
+
+function selQl(btn,i){
+  document.querySelectorAll('.ql-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); activeQl=i;
+  showToast(`🎬 الجودة: ${QLS[i]}`);
+}
+
+function startDl(q,s){showToast(`⬇️ جارٍ التنزيل — ${q} من ${s}`);}
+function dlSz(q){return{360:120,480:200,720:350,1080:700,'4K':1400}[q]||350;}
+
+function closePlayer(){
+  document.getElementById('player-page').style.display='none';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-home').classList.add('active');
+}
+
+// ═══ WATCHLIST ═══
+function addToList(id){
+  if(id===null||id===undefined)return;
+  if(wl.includes(id)){showToast('📋 موجود في قائمتك');return;}
+  wl.push(id);
+  localStorage.setItem('amwl',JSON.stringify(wl));
+  showToast('✅ أضيف إلى قائمتك!');
+  renderWL(); updateStats();
+}
+
+// ═══ UTILS ═══
+function typeLabel(t){return{anime:'أنمي ياباني',manhwa:'مانهوا كورية',manhua:'مانهوا صينية',manga:'مانغا',cartoon:'كرتون',comic:'كوميك',donghua:'دونهوا صيني'}[t]||t;}
+
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+function setupReveal(){
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add('vis');
+  }),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();document.getElementById('searchInput').focus();}
+  if(e.key==='Escape'){closeModal();}
+});
+</script>
+</body>
+</html>
